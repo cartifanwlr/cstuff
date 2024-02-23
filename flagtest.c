@@ -19,7 +19,7 @@ int read_flag (int applier) {
 }
 
 void safety_check (char* applier) {
-    flagsin = atoi(applier);
+    flagsin = atoi (applier);
 
     for (int i = 0; !(applier[i] == '\n'); i++){
         if ((applier[i] < '0') || (applier[i] > '9')){
@@ -32,12 +32,12 @@ void safety_check (char* applier) {
         printf ("Invalid data\n");
     }
     else{
-        write_flag(flagsin);
+        write_flag (flagsin);
     }
 }
 
 int find_log (int applier) {
-    return log(applier) / log(2);
+    return log (applier) / log(2);
 }
 
 int main() {
@@ -48,10 +48,10 @@ int main() {
         if (!(strncmp(catcher, exitcond, 2))) {
             break;
         }
-        safety_check(catcher);
+        safety_check (catcher);
     }
 
-    printf("Value of userflags is %d\n", userflags);
+    printf ("Value of userflags is %d\n", userflags);
 
     for (int i = 0; i <= MAX_BITS; i++) {
         if (read_flag(i) != 0)
