@@ -60,7 +60,5 @@ int main (int argc, char *argv[]) {
         }
     }
 
-    if (flagsin == 0) fputs ("No bits are set.\n", stdout);
-
     return 0;
 }
