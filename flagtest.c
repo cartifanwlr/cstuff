@@ -37,7 +37,7 @@ void safety_check (char* applier) {
 }
 
 int find_log (int applier) {
-    return log (applier) / log(2);
+    return log (applier) / log (2);
 }
 
 int main (int argc, char *argv[]) {
