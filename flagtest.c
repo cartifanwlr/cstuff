@@ -29,7 +29,7 @@ void safety_check (char* applier) {
     }
 
     if (flagsin < -1 || flagsin > MAX_BITS){
-        printf ("Invalid data entered.\n");
+        fputs ("Invalid data entered.\n", stdout);
     }
     else {
         write_flag (flagsin);
