@@ -10,7 +10,7 @@ char catcher [300];
 char exitcond [] = {'-', '1'};
 
 void write_flag (int applier) {
-    userflags |= (1 << applier);
+    userflags ^= (1 << applier);
 }
 
 int read_flag (int applier) {
@@ -29,9 +29,9 @@ void safety_check (char* applier) {
     }
 
     if (flagsin < -1 || flagsin > MAX_BITS){
-        printf ("Invalid data\n");
+        printf ("Invalid data entered.\n");
     }
-    else{
+    else {
         write_flag (flagsin);
     }
 }
@@ -40,10 +40,11 @@ int find_log (int applier) {
     return log (applier) / log(2);
 }
 
-int main() {
-    printf ("Enter a number from 0 to %d, -1 to exit\n", MAX_BITS);
+int main (int argc, char *argv[]) {
+    printf ("Enter a number from 0 to %d to set a bit.\nEntering it again will remove the bit.\nEnter -1 to exit.\n", MAX_BITS);
 
     while (1) {
+        fputs (">>> ", stdout);
         fgets (catcher, sizeof(catcher), stdin);
         if (!(strncmp(catcher, exitcond, 2))) {
             break;
@@ -51,12 +52,15 @@ int main() {
         safety_check (catcher);
     }
 
-    printf ("Value of userflags is %d\n", userflags);
+    printf ("Value of userflags is %d.\n", userflags);
 
     for (int i = 0; i <= MAX_BITS; i++) {
-        if (read_flag(i) != 0)
-            printf ("Flag %d is set\n", find_log(read_flag(i)));
+        if (read_flag(i) != 0) {
+            printf ("Bit %d is set.\n", find_log(read_flag(i)));
+        }
     }
+
+    if (flagsin == 0) fputs ("No bits are set.\n", stdout);
 
     return 0;
 }
