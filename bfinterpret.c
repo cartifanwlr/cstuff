@@ -3,15 +3,11 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include <errno.h>
 
-int errcatch = 0; /* Error catcher */
 uint8_t data[32768]; /* 32 KB of RAM */
 uint8_t* dataptr = data; /* Data pointer */
 char inst[8192]; /* 8 KB of ROM */
 char* instptr = inst; /* Instruction pointer */
-FILE* fileptr; /* File pointer which will get copied to instptr */
-char exitcond [] = {'-', '1'};
 
 void move_inst() {
     instptr++;
@@ -43,19 +39,12 @@ void cmd_comma() {
     *dataptr = (uint8_t) atoi(readable);
 }
 
-//check for bracket validity
+/* record first bracket, move until you see second bracket, find the offset*/
 char* check_brackets(int direction) {
-    char* tempptr = instptr;
-    int openbrackets = 1;
-
-    for (int i = 0; i <= sizeof(inst); i++){
-        
-    }
-
-
-    return tempptr;
+    
 }
 
+//code should ideally run within these two funcs
 void cmd_leftbracket() {
     
 
@@ -105,10 +94,13 @@ void reading_loop() {
 }
 
 int main(int argc, char *argv[]) {
+    FILE* fileptr;
+    char exitcond [] = {'-', '1'};
+    int errcatch = 0;
 
     if (!strcasecmp(argv[1], "-v")){
         fputs("v1.0\n", stdout);
-        return errcatch;
+        goto end;
     }
 
     else if (!strcasecmp(argv[1], "-f")){
@@ -116,7 +108,7 @@ int main(int argc, char *argv[]) {
         if (fileptr == NULL){
             perror("File not specified or does not exist");
             errcatch = 1;
-            return errcatch;
+            goto end;
         }
         fgets(inst, sizeof(inst), fileptr);
         fclose(fileptr);
@@ -124,16 +116,15 @@ int main(int argc, char *argv[]) {
     }
 
     else {
-        while (1) {
-            fputs("\nEnter Brainfuck code, -1 to exit: ", stdout);
-            fgets(inst, sizeof(inst), stdin);
-            if (!strncmp(inst, exitcond, 2)){
-                break;
-            }
-            reading_loop();
+        fputs("\nEnter Brainfuck code, -1 to exit: ", stdout);
+        fgets(inst, sizeof(inst), stdin);
+        if (!strncmp(inst, exitcond, 2)){
+            goto end;
         }
+        reading_loop(); 
     }
 
+end:
     return errcatch;
 
 }
