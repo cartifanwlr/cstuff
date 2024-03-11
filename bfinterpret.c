@@ -9,8 +9,8 @@ uint8_t* dataptr = data; /* Data pointer */
 char inst[8192]; /* 8 KB of ROM */
 char* instptr = inst; /* Instruction pointer */
 
-void move_inst() {
-    instptr++;
+void move_inst(char* ptr, int direction) {
+    if (direction) ptr++; else ptr--;
 }
 
 void cmd_greater() {
@@ -28,30 +28,47 @@ void cmd_plus() {
 void cmd_minus() {
     (*dataptr)--;
 }
-
+//maybe this is the culprit?
 void cmd_dot() {
     char printable = (char) *dataptr;
     fputc(printable, stdout);
 }
+
 //fix this it does NOT work
 void cmd_comma() {
     char readable[1] = {(char) fgetc(stdin)};
+    fflush(stdin);
     *dataptr = (uint8_t) atoi(readable);
 }
-
-/* record first bracket, move until you see second bracket, find the offset*/
+//also fix this it does nothing
 char* check_brackets(int direction) {
-    
+    char* temp = instptr;
+    char* temp2 = inst;
+    if (direction) direction = 1;
+    if (direction < 0) direction = 0;
+    int open_brackets = 1;
+
+    while ((direction && (temp - temp2 < sizeof(inst))) || ((!direction) &&  temp - temp2 > 0)) {
+        if (direction) move_inst(temp, 1); else move_inst(temp, 0);
+        if ((direction && *temp == '[') || (!direction && *temp == ']')) open_brackets++;
+        if ((direction && *temp == ']') || (!direction && *temp == '[')) open_brackets--;
+        if (!open_brackets) break;
+    }
+
+    if (open_brackets) {
+        fputs("\nOpen brackets found. Aborting.", stdout);
+        //somehow make this exit
+    }
+
+    return temp;
 }
 
-//code should ideally run within these two funcs
 void cmd_leftbracket() {
-    
-
+    if(!(*dataptr)) instptr = check_brackets(1);
 }
 
 void cmd_rightbracket() {
-
+    if(!(*dataptr)) instptr = check_brackets(0);
 }
 
 void reading_loop() {
@@ -89,7 +106,7 @@ void reading_loop() {
                 cmd_rightbracket();
                 break;
         }
-        move_inst();
+        move_inst(instptr, 1);
     }
 }
 
