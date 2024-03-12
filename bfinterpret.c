@@ -9,8 +9,12 @@ uint8_t* dataptr = data; /* Data pointer */
 char inst[8192]; /* 8 KB of ROM */
 char* instptr = inst; /* Instruction pointer */
 
-void move_inst(char* ptr, int direction) {
-    if (direction) ptr++; else ptr--;
+void move_inst_right() {
+    instptr++;
+}
+
+void move_inst_left() {
+    instptr--;
 }
 
 void cmd_greater() {
@@ -28,16 +32,16 @@ void cmd_plus() {
 void cmd_minus() {
     (*dataptr)--;
 }
-//maybe this is the culprit?
+
 void cmd_dot() {
-    char printable = (char) *dataptr;
-    fputc(printable, stdout);
+    printf("%c", *dataptr);
 }
 
 //fix this it does NOT work
 void cmd_comma() {
-    char readable[1] = {(char) fgetc(stdin)};
-    fflush(stdin);
+    char readable[300];
+    fgets(readable, sizeof(readable), stdin);
+
     *dataptr = (uint8_t) atoi(readable);
 }
 //also fix this it does nothing
@@ -49,7 +53,7 @@ char* check_brackets(int direction) {
     int open_brackets = 1;
 
     while ((direction && (temp - temp2 < sizeof(inst))) || ((!direction) &&  temp - temp2 > 0)) {
-        if (direction) move_inst(temp, 1); else move_inst(temp, 0);
+        if (direction) move_inst_right(); else move_inst_left();
         if ((direction && *temp == '[') || (!direction && *temp == ']')) open_brackets++;
         if ((direction && *temp == ']') || (!direction && *temp == '[')) open_brackets--;
         if (!open_brackets) break;
@@ -106,7 +110,7 @@ void reading_loop() {
                 cmd_rightbracket();
                 break;
         }
-        move_inst(instptr, 1);
+        move_inst_right();
     }
 }
 
